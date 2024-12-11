@@ -1,0 +1,110 @@
+% Custom Beamer Style File
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mystyle}[2024/12/11 Custom Beamer Style]
+
+% Required packages
+\RequirePackage{tikz}
+\usetikzlibrary{positioning}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\usepackage{adjustbox}
+
+% Color definitions
+\definecolor{progressblue}{HTML}{00008B}  % Dark Blue
+\definecolor{progressgrey}{HTML}{D3D3D3} % Light Grey
+\definecolor{footerorange}{HTML}{FFA500} % Orange
+
+% Command for footer text
+\newcommand{\footertext}[1]{%
+    \gdef\customfoottext{\vspace*{-0.4cm}#1}%
+}
+\footertext{} % Default empty footer text
+
+% Full-page image title slide with dark orange background
+\newcommand{\titlebackground}[1]{%
+    {
+        \setbeamertemplate{background canvas}{%
+            \begin{tikzpicture}[remember picture,overlay]
+                % Set dark orange background color for the first slide
+                \fill[progressblue] (current page.south west) rectangle (current page.north east);
+                \node[anchor=center, opacity=0.9] at (current page.center) {\includegraphics[height=\paperheight]{#1}};
+                \node[anchor=north east, xshift=-10pt, yshift=-10pt] at (current page.north east) {\includegraphics[width=150px]{unisa.png}};
+            \end{tikzpicture}
+        }%
+        \begin{frame}[plain]
+            \begin{tikzpicture}[remember picture, overlay]
+                % Rectangle positioned at x=0, y=50% of the page height
+                \path (current page.south west) ++(0, 0.5\paperheight) coordinate (top-left);
+                \path (top-left) ++(\paperwidth, -0.25\paperheight) coordinate (bottom-right);
+        
+                % Draw rectangle using calculated coordinates with dark orange fill
+                \fill[footerorange, opacity=0.7] (top-left) rectangle (bottom-right);
+                %\draw[thick] (top-left) rectangle (bottom-right);
+        
+                % Add minipage inside the rectangle, auto-sized using adjustbox
+                \node[anchor=north west, text width=\paperwidth, inner sep=1em] at (top-left) {
+                    \adjustbox{valign=m,minipage=\paperwidth}{%
+                        \centering
+                        \textbf{\Huge \color{white} \usebeamerfont{title}\inserttitle\\[0.5em]}
+                        \usebeamerfont{author}\insertauthor\\[0.5em]
+                        \usebeamerfont{date}\insertdate\\
+                    }
+                };
+            \end{tikzpicture}
+
+
+        \end{frame}
+        \setbeamertemplate{background canvas}[default] % Reset template
+    }
+}
+
+% Section title page with subtle blue tint
+\newcommand{\makesection}[1]{%
+    \begin{frame}[plain]
+        \begin{tikzpicture}[remember picture,overlay]
+            \fill[footerorange,opacity=0.9] (current page.south west) rectangle (current page.north east);
+        \end{tikzpicture}
+        \begin{center}
+            \usebeamerfont{frametitle}
+            \Large\textbf{#1}
+        \end{center}
+    \end{frame}
+}
+
+% Add footer and progress bar to footline
+\makeatletter
+\setbeamertemplate{footline}{%
+    % Orange footer box (adjust width to \paperwidth)
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange} % Ensure footer spans entire width
+        % Text on the left side
+        \begin{minipage}[t]{0.8\paperwidth} % Adjust width for text (leaving space for image)
+            \raggedright
+            \usebeamerfont{footline}\customfoottext
+        \end{minipage}%
+        % Image on the right side
+        \begin{minipage}[c]{0.15\paperwidth} % Adjust width for the image
+            \raggedleft
+            \raisebox{-0.25cm}[0cm][0cm]{\insertframenumber{} of \inserttotalframenumber\includegraphics[height=0.85cm]{unisa_color.png}} % Fine-tune vertical position of the image
+        \end{minipage}
+    \end{beamercolorbox}%
+    % Progress bar using TikZ
+    \begin{tikzpicture}[remember picture,overlay]
+        \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm); % Grey background
+        \fill[progressblue] (0,0) rectangle ({\paperwidth * \insertframenumber / \inserttotalframenumber},0.05cm); % Blue progress
+    \end{tikzpicture}%
+}
+\makeatother
+
+
+% Color theme
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{footerorange}{fg=black,bg=footerorange}
+\setbeamercolor{progressblue}{bg=progressblue}
+\setbeamercolor{progressgrey}{bg=progressgrey}
+\setbeamercolor*{normal text}{fg=black}
+\setbeamercolor*{alerted text}{fg=red}
+\setbeamercolor*{example text}{fg=green!50!black}
+
+\mode<presentation>
+
+\endinput

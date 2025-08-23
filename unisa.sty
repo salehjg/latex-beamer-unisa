@@ -25,7 +25,7 @@
     {
         \setbeamertemplate{background canvas}{%
             \begin{tikzpicture}[remember picture,overlay]
-                % Set dark orange background color for the first slide
+                % Set dark blue background color for the first slide
                 \fill[progressblue] (current page.south west) rectangle (current page.north east);
                 \node[anchor=center, opacity=0.9] at (current page.center) {\includegraphics[height=\paperheight]{#1}};
                 \node[anchor=north east, xshift=-10pt, yshift=-10pt] at (current page.north east) {\includegraphics[width=150px]{unisa.png}};
@@ -36,23 +36,21 @@
                 % Rectangle positioned at x=0, y=50% of the page height
                 \path (current page.south west) ++(0, 0.5\paperheight) coordinate (top-left);
                 \path (top-left) ++(\paperwidth, -0.25\paperheight) coordinate (bottom-right);
-        
-                % Draw rectangle using calculated coordinates with dark orange fill
+
+                % Calculate center of the orange rectangle
+                \path (top-left) ++(\paperwidth/2, -0.125\paperheight) coordinate (rect-center);
+
+                % Draw rectangle using calculated coordinates with orange fill
                 \fill[footerorange, opacity=0.7] (top-left) rectangle (bottom-right);
-                %\draw[thick] (top-left) rectangle (bottom-right);
-        
-                % Add minipage inside the rectangle, auto-sized using adjustbox
-                \node[anchor=north west, text width=\paperwidth, inner sep=1em] at (top-left) {
-                    \adjustbox{valign=m,minipage=\paperwidth}{%
-                        \centering
-                        \textbf{\Huge \color{white} \usebeamerfont{title}\inserttitle\\[0.5em]}
-                        \usebeamerfont{author}\insertauthor\\[0.5em]
-                        \usebeamerfont{date}\insertdate\\
-                    }
+
+                % Add text centered in the rectangle
+                \node[anchor=center, text width=\paperwidth, align=center, inner sep=1em] at (rect-center) {
+                    \color{white}
+                    \textbf{\Huge \usebeamerfont{title}\inserttitle}\\[0.5em]
+                    \usebeamerfont{author}\insertauthor\\[0.5em]
+                    \usebeamerfont{date}\insertdate
                 };
             \end{tikzpicture}
-
-
         \end{frame}
         \setbeamertemplate{background canvas}[default] % Reset template
     }
@@ -62,7 +60,13 @@
 \newcommand{\makesection}[1]{%
     \begin{frame}[plain]
         \begin{tikzpicture}[remember picture,overlay]
+            % Orange background
             \fill[footerorange,opacity=0.9] (current page.south west) rectangle (current page.north east);
+
+            % Progress bar at the bottom
+            \fill[progressgrey] (current page.south west) rectangle ([xshift=\paperwidth, yshift=0.05cm]current page.south west);
+            \fill[progressblue] (current page.south west) rectangle
+                  ([xshift={\paperwidth * \insertframenumber / \inserttotalframenumber}, yshift=0.05cm]current page.south west);
         \end{tikzpicture}
         \begin{center}
             \usebeamerfont{frametitle}
@@ -72,25 +76,22 @@
 }
 
 % Add footer and progress bar to footline
+% In unisa.sty, replace the footline definition with:
 \makeatletter
 \setbeamertemplate{footline}{%
-    % Orange footer box (adjust width to \paperwidth)
-    \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange} % Ensure footer spans entire width
-        % Text on the left side
-        \begin{minipage}[t]{0.8\paperwidth} % Adjust width for text (leaving space for image)
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange}
+        % Use a simpler approach with just one minipage for the footnote text
+        \begin{minipage}[t]{0.8\paperwidth}
             \raggedright
-            \usebeamerfont{footline}\customfoottext
+            \usebeamerfont{footline}\ifx\customfoottext\@empty\hspace{0pt}\else\customfoottext\fi
         \end{minipage}%
-        % Image on the right side
-        \begin{minipage}[c]{0.15\paperwidth} % Adjust width for the image
-            \raggedleft
-            \raisebox{-0.25cm}[0cm][0cm]{\insertframenumber{} of \inserttotalframenumber\includegraphics[height=0.85cm]{unisa_color.png}} % Fine-tune vertical position of the image
-        \end{minipage}
+        % Position the page number and logo on the right using \hfill
+        \hfill
+        \raisebox{-0.25cm}[0cm][0cm]{\insertframenumber{} of \inserttotalframenumber\includegraphics[height=0.85cm]{unisa_color.png}}
     \end{beamercolorbox}%
-    % Progress bar using TikZ
     \begin{tikzpicture}[remember picture,overlay]
-        \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm); % Grey background
-        \fill[progressblue] (0,0) rectangle ({\paperwidth * \insertframenumber / \inserttotalframenumber},0.05cm); % Blue progress
+        \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm);
+        \fill[progressblue] (0,0) rectangle ({\paperwidth * \insertframenumber / \inserttotalframenumber},0.05cm);
     \end{tikzpicture}%
 }
 \makeatother

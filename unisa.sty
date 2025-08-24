@@ -14,10 +14,30 @@
 \definecolor{progressgrey}{HTML}{D3D3D3} % Light Grey
 \definecolor{footerorange}{HTML}{FFA500} % Orange
 
-% Command for footer text
+% Command for footer text that handles citations properly
 \newcommand{\footertext}[1]{%
     \gdef\customfoottext{\vspace*{-0.4cm}#1}%
 }
+
+% Command for footer citations only
+\newcommand{\footfullcite}[1]{%
+    \footertext{\fullcite{#1}}%
+}
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% Command for both inline citation and footer full citation
+\newcommand{\citewithfooter}[1]{%
+    \cite{#1}%
+    \footertext{\fullcite{#1}}%
+}
+
+% Override footnote to work with footer
+\renewcommand{\footnote}[1]{%
+    \footertext{#1}%
+}
+
 \footertext{} % Default empty footer text
 
 % Full-page image title slide with dark orange background
@@ -33,18 +53,19 @@
         }%
         \begin{frame}[plain]
             \begin{tikzpicture}[remember picture, overlay]
-                % Rectangle positioned at x=0, y=50% of the page height
-                \path (current page.south west) ++(0, 0.5\paperheight) coordinate (top-left);
-                \path (top-left) ++(\paperwidth, -0.25\paperheight) coordinate (bottom-right);
+                % Create the text content first to measure its height
+                \node[anchor=center, text width=0.9\paperwidth, align=center, inner sep=1.5em] at (current page.center) (textbox) {
+                    \color{white}
+                    \textbf{\Huge \usebeamerfont{title}\inserttitle}\\[0.5em]
+                    \usebeamerfont{author}\insertauthor\\[0.5em]
+                    \usebeamerfont{date}\insertdate
+                };
 
-                % Calculate center of the orange rectangle
-                \path (top-left) ++(\paperwidth/2, -0.125\paperheight) coordinate (rect-center);
+                % Draw the orange background with full page width but fitting text height
+                \fill[footerorange, opacity=0.7] (current page.west |- textbox.south) rectangle (current page.east |- textbox.north);
 
-                % Draw rectangle using calculated coordinates with orange fill
-                \fill[footerorange, opacity=0.7] (top-left) rectangle (bottom-right);
-
-                % Add text centered in the rectangle
-                \node[anchor=center, text width=\paperwidth, align=center, inner sep=1em] at (rect-center) {
+                % Redraw the text on top of the background
+                \node[anchor=center, text width=0.9\paperwidth, align=center, inner sep=1.5em] at (current page.center) {
                     \color{white}
                     \textbf{\Huge \usebeamerfont{title}\inserttitle}\\[0.5em]
                     \usebeamerfont{author}\insertauthor\\[0.5em]
@@ -65,8 +86,10 @@
 
             % Progress bar at the bottom
             \fill[progressgrey] (current page.south west) rectangle ([xshift=\paperwidth, yshift=0.05cm]current page.south west);
-            \fill[progressblue] (current page.south west) rectangle
-                  ([xshift={\paperwidth * \insertframenumber / \inserttotalframenumber}, yshift=0.05cm]current page.south west);
+            \ifnum\insertframenumber>1
+                \fill[progressblue] (current page.south west) rectangle
+                      ([xshift={\paperwidth * (\insertframenumber - 1) / (\inserttotalframenumber - 1)}, yshift=0.05cm]current page.south west);
+            \fi
         \end{tikzpicture}
         \begin{center}
             \usebeamerfont{frametitle}
@@ -76,26 +99,29 @@
 }
 
 % Add footer and progress bar to footline
-% In unisa.sty, replace the footline definition with:
 \makeatletter
 \setbeamertemplate{footline}{%
     \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange}
-        % Use a simpler approach with just one minipage for the footnote text
-        \begin{minipage}[t]{0.8\paperwidth}
+        % Logo on the far left
+        \raisebox{-0.25cm}[0cm][0cm]{\includegraphics[height=0.85cm]{unisa_color.png}}%
+        % Footnote text positioned to the right of logo with spacing, left-aligned but vertically centered
+        \hspace{0.5cm}%
+        \begin{minipage}[c][0.7cm][c]{0.75\paperwidth}
             \raggedright
             \usebeamerfont{footline}\ifx\customfoottext\@empty\hspace{0pt}\else\customfoottext\fi
         \end{minipage}%
-        % Position the page number and logo on the right using \hfill
+        % Push page number to the right and align higher
         \hfill
-        \raisebox{-0.25cm}[0cm][0cm]{\insertframenumber{} of \inserttotalframenumber\includegraphics[height=0.85cm]{unisa_color.png}}
+        \raisebox{-0.1cm}[0cm][0cm]{\usebeamerfont{footline}\insertframenumber}
     \end{beamercolorbox}%
     \begin{tikzpicture}[remember picture,overlay]
         \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm);
-        \fill[progressblue] (0,0) rectangle ({\paperwidth * \insertframenumber / \inserttotalframenumber},0.05cm);
+        \ifnum\insertframenumber>1
+            \fill[progressblue] (0,0) rectangle ({\paperwidth * (\insertframenumber - 1) / (\inserttotalframenumber - 1)},0.05cm);
+        \fi
     \end{tikzpicture}%
 }
 \makeatother
-
 
 % Color theme
 \setbeamercolor{background canvas}{bg=white}

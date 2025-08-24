@@ -1,5 +1,7 @@
 \documentclass{beamer}
 \usepackage{unisa}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\addbibresource{refs.bib}
 
 \title{Unofficial Beamer Template}
 \author{Saleh Jamali Golzar}
@@ -20,9 +22,8 @@
     \end{frame}
 
 
-    \makesection{Section 2}
-    \footertext{Important ref number 2.}
-    \begin{frame}{Title Sec 2}
+    \makesection{Section 2 - }
+    \begin{frame}{Title Sec 2 with footnote citation \citewithfooter{quant.pot:DenseShift23}}
         This is the content.
         \begin{itemize}
             \item Bar

@@ -31,6 +31,20 @@
 \newcommand{\citewithfooter}[1]{%
     \cite{#1}%
     \footertext{\fullcite{#1}}%
+    \only<1>{\gdef\shouldclearfooter{true}}%
+}
+
+% Hook to clear footer at frame start
+\BeforeBeginEnvironment{frame}{%
+    \ifcsdef{shouldclearfooter}{%
+        \clearfooter%
+        \csundef{shouldclearfooter}%
+    }{}%
+}
+
+% Command to clear footer text
+\newcommand{\clearfooter}{%
+    \footertext{}%
 }
 
 % Override footnote to work with footer
@@ -48,7 +62,12 @@
                 % Set dark blue background color for the first slide
                 \fill[progressblue] (current page.south west) rectangle (current page.north east);
                 \node[anchor=center, opacity=0.9] at (current page.center) {\includegraphics[height=\paperheight]{#1}};
-                \node[anchor=north east, xshift=-10pt, yshift=-10pt] at (current page.north east) {\includegraphics[width=150px]{unisa.png}};
+                \node[anchor=north west, xshift=8pt, yshift=0pt] at (current page.north west) {\includegraphics[width=48px]{unisa_written_logo}};
+
+
+                \node[anchor=south east, xshift=-60pt, yshift=10pt] at (current page.south east) {\includegraphics[width=35px]{doinf}};
+                \node[anchor=south east, xshift=-8pt, yshift=12pt] at (current page.south east) {\includegraphics[width=48px]{isslab}};
+                \node[anchor=south east, xshift=-100pt, yshift=10pt] at (current page.south east) {\includegraphics[width=35px]{unisa.png}};
             \end{tikzpicture}
         }%
         \begin{frame}[plain]
@@ -103,7 +122,7 @@
 \setbeamertemplate{footline}{%
     \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange}
         % Logo on the far left
-        \raisebox{-0.25cm}[0cm][0cm]{\includegraphics[height=0.85cm]{unisa_color.png}}%
+        \raisebox{-0.25cm}[0cm][0cm]{\includegraphics[height=0.85cm]{unisa.png}}%
         % Footnote text positioned to the right of logo with spacing, left-aligned but vertically centered
         \hspace{0.5cm}%
         \begin{minipage}[c][0.7cm][c]{0.75\paperwidth}

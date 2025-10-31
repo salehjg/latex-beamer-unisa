@@ -105,9 +105,19 @@
 
             % Progress bar at the bottom
             \fill[progressgrey] (current page.south west) rectangle ([xshift=\paperwidth, yshift=0.05cm]current page.south west);
-            \ifnum\insertframenumber>1
+            
+            % Calculate progress safely
+            \pgfmathsetmacro{\progress}{0}
+            \ifnum\inserttotalframenumber>1
+                \ifnum\insertframenumber>1
+                    \pgfmathsetmacro{\progress}{(\insertframenumber - 1) / (\inserttotalframenumber - 1)}
+                \fi
+            \fi
+            
+            % Only draw if progress is valid and positive
+            \ifdim\progress pt>0pt
                 \fill[progressblue] (current page.south west) rectangle
-                      ([xshift={\paperwidth * (\insertframenumber - 1) / (\inserttotalframenumber - 1)}, yshift=0.05cm]current page.south west);
+                      ([xshift=\progress\paperwidth, yshift=0.05cm]current page.south west);
             \fi
         \end{tikzpicture}
         \begin{center}
@@ -135,8 +145,18 @@
     \end{beamercolorbox}%
     \begin{tikzpicture}[remember picture,overlay]
         \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm);
-        \ifnum\insertframenumber>1
-            \fill[progressblue] (0,0) rectangle ({\paperwidth * (\insertframenumber - 1) / (\inserttotalframenumber - 1)},0.05cm);
+        
+        % Calculate progress safely
+        \pgfmathsetmacro{\progress}{0}
+        \ifnum\inserttotalframenumber>1
+            \ifnum\insertframenumber>1
+                \pgfmathsetmacro{\progress}{(\insertframenumber - 1) / (\inserttotalframenumber - 1)}
+            \fi
+        \fi
+        
+        % Only draw if progress is valid and positive
+        \ifdim\progress pt>0pt
+            \fill[progressblue] (0,0) rectangle ({\progress\paperwidth},0.05cm);
         \fi
     \end{tikzpicture}%
 }

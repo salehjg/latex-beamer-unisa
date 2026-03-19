@@ -24,32 +24,37 @@
     \footertext{\fullcite{#1}}%
 }
 
+\newcommand{\nofooterframe}{\setbeamertemplate{footline}{}}
+
 % Remove navigation symbols
 \setbeamertemplate{navigation symbols}{}
 
-% Command for both inline citation and footer full citation
+% Command for both inline citation and footer full citation (authoryear style)
 \newcommand{\citewithfooter}[1]{%
     \cite{#1}%
     \footertext{\fullcite{#1}}%
-    \only<1>{\gdef\shouldclearfooter{true}}%
 }
 
-% Hook to clear footer at frame start
+% Command for bracket-number citation with numbered footer (numeric style)
+\newcommand{\citefoot}[1]{%
+    \cite{#1}%
+    \footertext{\cite{#1}~\fullcite{#1}}%
+}
+
+% Auto-clear footer before every frame; content can re-set it if needed
 \BeforeBeginEnvironment{frame}{%
-    \ifcsdef{shouldclearfooter}{%
-        \clearfooter%
-        \csundef{shouldclearfooter}%
-    }{}%
+    \gdef\customfoottext{}%
 }
 
-% Command to clear footer text
-\newcommand{\clearfooter}{%
-    \footertext{}%
-}
+% Footnote counter (resets per frame via auto-clear hook)
+\newcounter{customfootnotectr}
+\BeforeBeginEnvironment{frame}{\setcounter{customfootnotectr}{0}}
 
-% Override footnote to work with footer
+% Override footnote to show superscript number inline and text in footer
 \renewcommand{\footnote}[1]{%
-    \footertext{#1}%
+    \stepcounter{customfootnotectr}%
+    \textsuperscript{\thecustomfootnotectr}%
+    \footertext{\textsuperscript{\thecustomfootnotectr}\,#1}%
 }
 
 \footertext{} % Default empty footer text

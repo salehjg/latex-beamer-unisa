@@ -9,7 +9,9 @@
 \setbeameroption{show notes on second screen=right} % for notes on right side
 
 \usepackage{unisa}
-\usepackage[backend=biber,style=authoryear]{biblatex}
+% Use style=authoryear for \citewithfooter (produces inline "Author, Year")
+% Use style=numeric   for \citefoot       (produces inline "[1]")
+\usepackage[backend=biber,style=numeric]{biblatex}
 \addbibresource{refs.bib}
 
 \title{Unofficial Beamer Template}
@@ -17,33 +19,148 @@
 \date{\today}
 
 \begin{document}
+
+    % =====================================================================
+    % 1. \titlebackground{image}
+    %    Creates a full-page title slide with the given image as background,
+    %    a dark blue fill behind it, university logos in the corners,
+    %    and an orange band with the title/author/date centered.
+    % =====================================================================
     \titlebackground{campus.jpg}
 
-    \makesection{Section 1}
-    \footertext{Important ref number 1.}
-    \begin{frame}{Title Sec 1}
-        Dont remove the pictures. Keep them at the root dir.
-        \begin{itemize}
-            \item Foo
-            \item Is
-            \item Bar.
-        \end{itemize}
+    % =====================================================================
+    % 2. \makesection{Title}
+    %    Creates a section divider slide with an orange background
+    %    and a progress bar at the bottom.
+    % =====================================================================
+    \makesection{Section 1: footertext \& footnote}
+
+    % =====================================================================
+    % 3. \footertext{text}
+    %    Sets custom text in the footer area of the next frame.
+    %    The text auto-clears before every frame, so you must call it
+    %    right before the frame you want it to appear on.
+    % =====================================================================
+    \footertext{This is custom footer text set with \texttt{\textbackslash footertext}.}
+    \begin{frame}{\texttt{\textbackslash footertext\{text\}}}
+        The footer below shows custom text set via \texttt{\textbackslash footertext\{...\}}.
+
+        It is placed to the right of the university logo and left of the page number.
+
+        Footer text auto-clears before every frame, so it only appears on frames where you explicitly set it.
     \end{frame}
 
+    % =====================================================================
+    % 7. \footnote{text}  (overridden)
+    %    Shows a superscript number inline and places the footnote text
+    %    in the footer area. Counter resets per frame.
+    % =====================================================================
+    \begin{frame}{\texttt{\textbackslash footnote\{text\}}}
+        The \texttt{\textbackslash footnote} command is overridden by unisa.sty.
 
-    \makesection{Section 2 - }
-    \begin{frame}{Title Sec 2 with footnote citation \citewithfooter{quant.pot:DenseShift23}}
-        This is the content.
-        \begin{itemize}
-            \item Bar
-            \item Is
-            \item Foo.
-        \end{itemize}
+        Instead of a standard beamer footnote, it shows a superscript number\footnote{This is the first footnote.} inline and places the text in the footer area\footnote{This is the second footnote.}.
+
+        The counter resets on every new frame.
     \end{frame}
 
-    \footertext{}
-    \begin{frame}{Last slide, no footnote.}
-        Did you notice? No section (full) page. No footnote either!
+    % =====================================================================
+    \makesection{Section 2: Citation Commands}
+
+    % =====================================================================
+    % 4. \footfullcite{key}
+    %    Places a full citation (via biblatex \fullcite) in the footer.
+    %    No inline text is produced.
+    % =====================================================================
+    \footfullcite{quant.pot:DenseShift23}
+    \begin{frame}{\texttt{\textbackslash footfullcite\{key\}}}
+        This command places a full citation in the footer without any inline text.
+
+        Look at the footer below --- the full reference for DenseShift appears there, set via \texttt{\textbackslash footfullcite\{quant.pot:DenseShift23\}}.
+    \end{frame}
+
+    % =====================================================================
+    % 5. \citewithfooter{key}
+    %    Produces an inline citation AND places the full citation in the
+    %    footer.  Best with style=authoryear (inline shows "Author, Year").
+    %    With style=numeric it still works but inline shows "[1]".
+    % =====================================================================
+    \begin{frame}{\texttt{\textbackslash citewithfooter\{key\}} --- authoryear style}
+        DenseShift \citewithfooter{quant.pot:DenseShift23} is a quantization method for neural networks.
+
+        \texttt{\textbackslash citewithfooter} prints an inline citation and the full reference in the footer.
+
+        \medskip
+
+        \textbf{Intended for} \texttt{style=authoryear} where the inline part renders as \textit{(Author, Year)}. With the current \texttt{style=numeric} it shows a bracket number instead.
+    \end{frame}
+
+    % =====================================================================
+    % 6. \citefoot{key}
+    %    Produces an inline bracket-number [1] citation AND places the
+    %    number + full citation in the footer.
+    %    Designed for style=numeric.
+    % =====================================================================
+    \begin{frame}{\texttt{\textbackslash citefoot\{key\}} --- numeric / bracket style}
+        DenseShift \citefoot{quant.pot:DenseShift23} proposes low-bit power-of-two quantization.
+
+        \texttt{\textbackslash citefoot} prints an inline bracket citation \textbf{[1]} and places the number alongside the full reference in the footer.
+
+        \medskip
+
+        \textbf{Intended for} \texttt{style=numeric} (the current style). Switch to \texttt{style=authoryear} if you prefer \texttt{\textbackslash citewithfooter}.
+    \end{frame}
+
+    % =====================================================================
+    \makesection{Section 3: Frame Control}
+
+    % =====================================================================
+    % 8. \nofooterframe
+    %    Removes the footer (logo, text, page number, progress bar)
+    %    entirely for the next frame.
+    % =====================================================================
+    \nofooterframe
+    \begin{frame}{\texttt{\textbackslash nofooterframe}}
+        \begin{center}
+            This frame has no footer at all.
+
+            The \texttt{\textbackslash nofooterframe} command was called before this frame, which sets the footline template to empty.
+        \end{center}
+    \end{frame}
+
+    % =====================================================================
+    \makesection{Section 4: Custom Colors}
+
+    % =====================================================================
+    % 9. Colors: progressblue, progressgrey, footerorange
+    %    Three colors defined by unisa.sty that can be used anywhere.
+    % =====================================================================
+    \begin{frame}{Custom Colors}
+        The style defines three colors you can use anywhere:
+
+        \bigskip
+
+        \textcolor{progressblue}{\rule{3cm}{0.5cm}} \texttt{progressblue} (dark blue, \#00008B)
+
+        \bigskip
+
+        \textcolor{progressgrey}{\rule{3cm}{0.5cm}} \texttt{progressgrey} (light grey, \#D3D3D3)
+
+        \bigskip
+
+        \textcolor{footerorange}{\rule{3cm}{0.5cm}} \texttt{footerorange} (orange, \#FFA500)
+
+        \bigskip
+
+        These are used internally for the progress bar and footer, but are available for your own use as well.
+    \end{frame}
+
+    % =====================================================================
+    % Empty footer on the last frame to show the default (no text) state.
+    % =====================================================================
+    \begin{frame}{Default Footer (no custom text)}
+        This is a normal frame with no \texttt{\textbackslash footertext} call.
+
+        Notice the footer only shows the university logo and page number --- no extra text. This is the default behavior since footer text auto-clears before every frame.
     \end{frame}
 
 \end{document}

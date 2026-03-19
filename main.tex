@@ -18,7 +18,7 @@
 \author{Saleh Jamali Golzar}
 \date{\today}
 
-\begin{document}
+\begin{document} 
 
     % =====================================================================
     % 1. \titlebackground{image}
@@ -37,12 +37,12 @@
 
     % =====================================================================
     % 3. \footertext{text}
-    %    Sets custom text in the footer area of the next frame.
-    %    The text auto-clears before every frame, so you must call it
-    %    right before the frame you want it to appear on.
+    %    Sets custom text in the footer area of the current frame.
+    %    Use inside \begin{frame}...\end{frame}.
+    %    The text auto-clears before every frame.
     % =====================================================================
-    \footertext{This is custom footer text set with \texttt{\textbackslash footertext}.}
     \begin{frame}{\texttt{\textbackslash footertext\{text\}}}
+    \footertext{This is custom footer text set with \texttt{\textbackslash footertext}.}
         The footer below shows custom text set via \texttt{\textbackslash footertext\{...\}}.
 
         It is placed to the right of the university logo and left of the page number.
@@ -71,8 +71,8 @@
     %    Places a full citation (via biblatex \fullcite) in the footer.
     %    No inline text is produced.
     % =====================================================================
-    \footfullcite{quant.pot:DenseShift23}
     \begin{frame}{\texttt{\textbackslash footfullcite\{key\}}}
+    \footfullcite{quant.pot:DenseShift23}
         This command places a full citation in the footer without any inline text.
 
         Look at the footer below --- the full reference for DenseShift appears there, set via \texttt{\textbackslash footfullcite\{quant.pot:DenseShift23\}}.
@@ -115,15 +115,15 @@
 
     % =====================================================================
     % 8. \nofooterframe
-    %    Removes the footer (logo, text, page number, progress bar)
-    %    entirely for the next frame.
+    %    Use inside \begin{frame}...\end{frame} to remove the footer
+    %    (logo, text, page number, progress bar) for that frame only.
     % =====================================================================
-    \nofooterframe
     \begin{frame}{\texttt{\textbackslash nofooterframe}}
+    \nofooterframe
         \begin{center}
             This frame has no footer at all.
 
-            The \texttt{\textbackslash nofooterframe} command was called before this frame, which sets the footline template to empty.
+            The \texttt{\textbackslash nofooterframe} command is called inside this frame, which removes the footer for this frame only.
         \end{center}
     \end{frame}
 
@@ -161,6 +161,6 @@
         This is a normal frame with no \texttt{\textbackslash footertext} call.
 
         Notice the footer only shows the university logo and page number --- no extra text. This is the default behavior since footer text auto-clears before every frame.
-    \end{frame}
+    \end{frame} 
 
 \end{document}

@@ -24,7 +24,11 @@
     \footertext{\fullcite{#1}}%
 }
 
-\newcommand{\nofooterframe}{\setbeamertemplate{footline}{}}
+\makeatletter
+\gdef\@nofooterstate{0}
+\newcommand{\nofooterframe}{\gdef\@nofooterstate{1}}
+\BeforeBeginEnvironment{frame}{\gdef\@nofooterstate{0}}
+\makeatother
 
 % Remove navigation symbols
 \setbeamertemplate{navigation symbols}{}
@@ -135,6 +139,8 @@
 % Add footer and progress bar to footline
 \makeatletter
 \setbeamertemplate{footline}{%
+    \ifnum\@nofooterstate=1\relax
+    \else
     \begin{beamercolorbox}[wd=\paperwidth,ht=0.7cm,dp=0.3cm,leftskip=0.3cm,rightskip=0.3cm]{footerorange}
         % Logo on the far left
         \raisebox{-0.25cm}[0cm][0cm]{\includegraphics[height=0.85cm]{unisa.png}}%
@@ -150,7 +156,7 @@
     \end{beamercolorbox}%
     \begin{tikzpicture}[remember picture,overlay]
         \fill[progressgrey] (0,0) rectangle (\paperwidth,0.05cm);
-        
+
         % Calculate progress safely
         \pgfmathsetmacro{\progress}{0}
         \ifnum\inserttotalframenumber>1
@@ -158,12 +164,13 @@
                 \pgfmathsetmacro{\progress}{(\insertframenumber - 1) / (\inserttotalframenumber - 1)}
             \fi
         \fi
-        
+
         % Only draw if progress is valid and positive
         \ifdim\progress pt>0pt
             \fill[progressblue] (0,0) rectangle ({\progress\paperwidth},0.05cm);
         \fi
     \end{tikzpicture}%
+    \fi
 }
 \makeatother
 
